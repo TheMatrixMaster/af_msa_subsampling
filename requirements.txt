@@ -1,0 +1,7 @@
+absl_py==1.0.0
+alphafold.egg==info
+Bio==1.7.1
+biopython==1.79
+jax==0.4.31
+numpy==1.24.3
+Requests==2.32.3
