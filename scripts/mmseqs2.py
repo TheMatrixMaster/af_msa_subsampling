@@ -45,6 +45,7 @@ class MMSeqs2Runner:
         t_url: str = "https://a3m-templates.mmseqs.com/template",
         path_suffix: str = "env",
         n_templates: int = 20,
+        outdir: str = None,
     ):
 
         r"""Initialize runner object
@@ -71,7 +72,10 @@ class MMSeqs2Runner:
         self.n_templates = n_templates
 
         self.path = "_".join((self.job, path_suffix))
-
+        if outdir is not None:
+            assert os.path.isdir(outdir), "Output directory does not exist"
+            self.path = os.path.join(outdir, self.path)
+        
         if not os.path.isdir(self.path):
             os.system(f"mkdir { self.path }")
 
@@ -258,16 +262,17 @@ class MMSeqs2Runner:
         logging.info("\t".join(("seq", "pdb", "cid", "evalue")))
 
         pdbs = []
+        lowered_templates = [t.lower() for t in templates]
         with open(f"{ self.path }/pdb70.m8", "r") as infile:
 
             for line in infile:
 
                 sl = line.rstrip().split()
-                pdb = sl[1]
-                if pdb in templates:
+                pdb = sl[1].lower()
+                if pdb in lowered_templates:
                     pdbs.append(sl[1])
                     logging.info(f"{ sl[0] }\t{ sl[1] }\t{ sl[2] }\t{ sl[10] }")
-
+        
         if len(pdbs) == 0:
             logging.warning("No templates found.")
             return ""

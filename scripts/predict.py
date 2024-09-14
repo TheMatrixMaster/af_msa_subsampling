@@ -189,7 +189,7 @@ def predict_structure_from_templates(
 
     if random_seed == -1:
         random_seed = random.randrange(sys.maxsize)
-
+    
     if model_id not in (1, 2):
         model_id = random.randint(1, 2)
 
@@ -379,11 +379,13 @@ def to_pdb(
     None
 
     """
-
+    outdir, filename = os.path.split(outname)
+    b_outname = os.path.join(outdir, f"b_{ filename }")
+    
     with open(outname, "w") as outfile:
         outfile.write(protein.to_pdb(pred))
 
-    with open(f"b_{ outname }", "w") as outfile:
+    with open(b_outname, "w") as outfile:
         for line in open(outname, "r").readlines():
             if line[0:6] == "ATOM  ":
                 seq_id = int(line[22:26].strip()) - 1
@@ -394,4 +396,4 @@ def to_pdb(
                     )
                 )
 
-    os.rename(f"b_{ outname }", outname)
+    os.rename(b_outname, outname)
